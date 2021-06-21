@@ -1,0 +1,28 @@
+// the proto buf version
+syntax = "proto3";
+
+// declare the package this file belongs to
+package ledger;
+
+// specify the go package of the generated code
+option go_package = "rpc/ledger";
+
+// Define a service with one method
+service Ledger {
+    rpc ClaimDomain(ClaimDomainInput) returns (ClaimDomainOutput);
+}
+
+message ClaimDomainInput {
+    string ClientRequestToken = 1; // we will use this to enforce idempotency - I'll explain this further in another post
+    string Subdomain = 2; // 
+    string Root = 3; // We will assume we are claiming subdomains on a set of domains we happen to own
+}
+
+message ClaimDomainOutput {
+    Domain Domain = 1;
+}
+
+message Domain {
+    string Root = 2;
+    string Subdomain = 3;
+}
