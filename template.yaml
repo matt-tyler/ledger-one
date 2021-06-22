@@ -2,11 +2,14 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Resources:
   Gateway:
-    Type: AWS::Serverless::HttpApi
+    Type: AWS::Serverless::Api
     Properties:
       Auth:
-        FailOnWarnings: true
         DefaultAuthorizer: AWS_IAM
+      EndpointConfiguration:
+        Type: REGIONAL
+      BinaryMediaTypes:
+        - application~1x-protobuf
 
   Storage:
     Type: AWS::DynamoDB::Table
@@ -22,7 +25,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: go1.x
-      Handler: api
+      CodeUri: ./bin/lambda
+      Handler: ledger
       Timeout: 10
       Policies:
         - DynamoDBCrudPolicy:
@@ -32,9 +36,9 @@ Resources:
           TABLE_NAME: !Ref Storage
       Events:
         RootHandler:
-          Type: HttpApi
+          Type: Api
           Properties:
-            ApiId: !Ref HttpApi
+            RestApiId: !Ref HttpApi
             Path: /{proxy+}
             Method: post
 

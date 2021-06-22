@@ -51,7 +51,13 @@ func main() {
 		log.Panicln("Failed to find required environment variable: TABLE_NAME")
 	}
 
-	ddb := dynamodb.NewFromConfig(cfg, dynamodb.WithAPIOptions(func(stack *middleware.Stack) error {
+	withEndpoint := func(options *dynamodb.Options) {
+		if endpoint, ok := os.LookupEnv("DDB_ENDPOINT"); ok {
+			options.EndpointResolver = dynamodb.EndpointResolverFromURL(endpoint)
+		}
+	}
+
+	ddb := dynamodb.NewFromConfig(cfg, withEndpoint, dynamodb.WithAPIOptions(func(stack *middleware.Stack) error {
 		// Attach the custom middleware to the beginning of the Initialize step
 		return stack.Initialize.Add(m.DefaultTableNameMiddleware(tableName), middleware.Before)
 	}))
