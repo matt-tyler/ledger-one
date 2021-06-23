@@ -19,19 +19,19 @@ import (
 	rpc "github.com/matt-tyler/ledger-one/rpc/ledger"
 )
 
-type APIGatewayV2HTTPHandler = func(ctx context.Context, event events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error)
+type APIGatewayProxyHandler = func(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error)
 
-func createHandler(serveHTTP http.HandlerFunc) APIGatewayV2HTTPHandler {
-	handler := func(ctx context.Context, event events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
-		reqAccessorV2 := core.RequestAccessorV2{}
+func createHandler(serveHTTP http.HandlerFunc) APIGatewayProxyHandler {
+	handler := func(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+		reqAccessorV2 := core.RequestAccessor{}
 		req, err := reqAccessorV2.ProxyEventToHTTPRequest(event)
 		if err != nil {
-			return events.APIGatewayV2HTTPResponse{
+			return events.APIGatewayProxyResponse{
 				StatusCode: 500,
 			}, nil
 		}
 		log.Println(req.Method, req.URL.String())
-		writer := core.NewProxyResponseWriterV2()
+		writer := core.NewProxyResponseWriter()
 
 		serveHTTP(writer, req.WithContext((ctx)))
 		res, err := writer.GetProxyResponse()

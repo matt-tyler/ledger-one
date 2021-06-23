@@ -10,6 +10,7 @@ Resources:
         Type: REGIONAL
       BinaryMediaTypes:
         - application~1x-protobuf
+      StageName: test
 
   Storage:
     Type: AWS::DynamoDB::Table
@@ -20,6 +21,11 @@ Resources:
           KeyType: HASH
         - AttributeName: sk
           KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
 
   Backend:
     Type: AWS::Serverless::Function
@@ -38,10 +44,10 @@ Resources:
         RootHandler:
           Type: Api
           Properties:
-            RestApiId: !Ref HttpApi
+            RestApiId: !Ref Gateway
             Path: /{proxy+}
             Method: post
 
 Outputs:
   Endpoint:
-    Value: !Sub https://${Gateway}.execute-api.${AWS::Region}.amazonaws.com
+    Value: !Sub https://${Gateway}.execute-api.${AWS::Region}.amazonaws.com/test

@@ -24,7 +24,9 @@ func (s *Server) ClaimDomain(ctx context.Context, input *pb.ClaimDomainInput) (*
 		},
 	}
 
-	s.ddb.PutItem(ctx, &command)
+	if _, err := s.ddb.PutItem(ctx, &command); err != nil {
+		return nil, err
+	}
 
 	return &pb.ClaimDomainOutput{
 		Domain: &pb.Domain{

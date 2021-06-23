@@ -37,7 +37,7 @@ build-lambda:
 		-o bin/lambda/ledger cmd/ledger/main.go
 
 .PHONY: package
-package: build
+package: build-lambda
 	sam package \
 		--template-file $(TEMPLATE) \
 		--s3-bucket $(S3_BUCKET) \
