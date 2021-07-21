@@ -41,7 +41,7 @@ func createHandler(serveHTTP http.HandlerFunc) APIGatewayProxyHandler {
 }
 
 func main() {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+	cfg, err := config.LoadDefaultConfig(context.Background())
 	if err != nil {
 		log.Panicf("Unable to load SDK config\n, %v", err)
 	}

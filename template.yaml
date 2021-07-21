@@ -40,6 +40,7 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Ref Storage
+          DDB_ENDPOINT: !Sub https://dynamodb.${AWS::Region}.amazonaws.com
       Events:
         RootHandler:
           Type: Api
